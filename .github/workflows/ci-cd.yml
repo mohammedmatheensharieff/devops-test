@@ -58,6 +58,8 @@ jobs:
           terraform init
           terraform plan -var-file="terraform.tfvars" \
                    -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}'
+          terraform apply -auto-approve -var-file="terraform.tfvars" \
+                  -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}' 
 
       
       # - name: Terraform Init and Plan
