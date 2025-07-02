@@ -52,13 +52,18 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
       
-      - name: Terraform Init and Plan
+      # - name: Terraform Init and Plan
+      - name: Debug current directory
         run: |
-          terraform init
-          terraform plan \
-            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
-            -var="region=${{ secrets.GCP_REGION }}" \
-            -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}"
+          pwd
+          ls -la
+
+        # run: |
+        #   terraform init
+        #   terraform plan \
+        #     -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+        #     -var="region=${{ secrets.GCP_REGION }}" \
+        #     -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}"
 
 
       # Optional steps if you want to preview Docker image builds
