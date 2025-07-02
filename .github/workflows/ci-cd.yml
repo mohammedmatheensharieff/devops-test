@@ -49,25 +49,70 @@ jobs:
           service_account_key: ${{ secrets.GCP_CREDENTIALS }}
           export_default_credentials: true
 
-      - name: Configure Docker to use gcloud
-        run: gcloud auth configure-docker
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
 
-      - name: Build & Push Frontend Docker image
+      - name: Run Terraform to create Artifact Registry
+        working-directory: terraform
         run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/naya-web ./naya-web
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/naya-web
+          terraform init
+          terraform plan
+      #     terraform apply -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+      #                                      -var="region=${{ secrets.GCP_REGION }}" \
+      #                                      -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}"
 
-      - name: Build & Push Backend Docker image
-        run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/naya-api ./naya-api
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/naya-api
+      # - name: Configure Docker to use gcloud
+      #   run: gcloud auth configure-docker asia-south1-docker.pkg.dev
 
-      # - name: Deploy with Terraform (optional)
-      #   working-directory: terraform
+      # - name: Build & Push Frontend Docker image
       #   run: |
-      #     terraform init
-      #     terraform apply -auto-approve
-      #   env:
-      #     GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-      #     GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-      #     GCP_REGION: ${{ secrets.GCP_REGION }}
+      #     docker build -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest ./naya-web
+      #     docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest
+
+      # - name: Build & Push Backend Docker image
+      #   run: |
+      #     docker build -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest ./naya-api
+      #     docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest
+
+
+
+
+  # deploy:
+  #   needs:
+  #     - test-frontend
+  #     - test-backend
+  #   if: ${{ success() }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+
+  #     - name: Set up Google Cloud SDK
+  #       uses: google-github-actions/setup-gcloud@v1
+  #       with:
+  #         project_id: ${{ secrets.GCP_PROJECT_ID }}
+  #         service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+  #         export_default_credentials: true
+
+  #     - name: Configure Docker to use gcloud
+  #       run: gcloud auth configure-docker
+
+  #     - name: Build & Push Frontend Docker image
+  #       run: |
+  #         docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/naya-web ./naya-web
+  #         docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/naya-web
+
+  #     - name: Build & Push Backend Docker image
+  #       run: |
+  #         docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/naya-api ./naya-api
+  #         docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/naya-api
+
+  #     # - name: Deploy with Terraform (optional)
+  #     #   working-directory: terraform
+  #     #   run: |
+  #     #     terraform init
+  #     #     terraform apply -auto-approve
+  #     #   env:
+  #     #     GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+  #     #     GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  #     #     GCP_REGION: ${{ secrets.GCP_REGION }}
