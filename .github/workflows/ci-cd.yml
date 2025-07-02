@@ -56,7 +56,9 @@ jobs:
         working-directory: terraform
         run: |
           terraform init
-          terraform plan
+          terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+                 -var="region=${{ secrets.GCP_REGION }}" \
+                 -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}"
       #     terraform apply -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
       #                                      -var="region=${{ secrets.GCP_REGION }}" \
       #                                      -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}"
