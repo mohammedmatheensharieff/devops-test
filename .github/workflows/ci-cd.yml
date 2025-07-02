@@ -42,13 +42,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
-          install_components: 'gke-gcloud-auth-plugin'
-          export_default_credentials: true
+         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Configure Docker to use Artifact Registry
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Build & Push Frontend Docker image
+        run: |
+          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest ./naya-web
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest
+
+      - name: Build & Push Backend Docker image
+        run: |
+          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest ./naya-api
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest
+
+
+      # - name: Set up Google Cloud SDK
+      #   uses: google-github-actions/setup-gcloud@v2
+      #   with:
+      #     project_id: ${{ secrets.GCP_PROJECT_ID }}
+      #     service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+      #     install_components: 'gke-gcloud-auth-plugin'
+      #     export_default_credentials: true
 
      
 
@@ -74,12 +96,12 @@ jobs:
       #     terraform apply -auto-approve -var-file="terraform.tfvars" \
       #             -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}'
 
-      - name: Configure Docker to use Artifact Registry
-        run: |
-          gcloud auth configure-docker us-central1-docker.pkg.dev
+      # - name: Configure Docker to use Artifact Registry
+      #   run: |
+      #     gcloud auth configure-docker us-central1-docker.pkg.dev
 
-      - name: Debug Docker Auth Config
-        run: cat ~/.docker/config.json
+      # - name: Debug Docker Auth Config
+      #   run: cat ~/.docker/config.json
 
 
       # - name: Build & Push Frontend Docker image
@@ -87,10 +109,10 @@ jobs:
       #     docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest ./naya-web
       #     docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest
 
-      - name: Build & Push Backend Docker image
-        run: |
-          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest ./naya-api
-          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest 
+      # - name: Build & Push Backend Docker image
+      #   run: |
+      #     docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest ./naya-api
+      #     docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest 
 
       
       # - name: Terraform Init and Plan
