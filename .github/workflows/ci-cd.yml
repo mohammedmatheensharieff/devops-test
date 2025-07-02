@@ -85,6 +85,7 @@ jobs:
           flags: --allow-unauthenticated --region=us-central1
           env_vars: |
             REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}
+          memory: 1Gi
 
 
 
