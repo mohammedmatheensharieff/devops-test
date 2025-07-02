@@ -1,4 +1,4 @@
-const APIURL = process.env.REACT_APP_APIURL || 'http://localhost:8080';
+const APIURL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 export const signInAPICall = (data) => {
   console.log(APIURL, '/api/login')
   return fetch(APIURL+'/api/login', {
