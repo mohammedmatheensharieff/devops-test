@@ -1,26 +1,14 @@
-# Stage 1: Build the React app
-FROM node:16-alpine AS builder
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-
-# Stage 2: Serve app with `serve`
 FROM node:16-alpine
 
 WORKDIR /app
 
-# Install serve
-RUN npm install -g serve
+COPY package*.json ./
+RUN npm install
 
-# Copy build artifacts
-COPY --from=builder /app/build ./build
+COPY . .
 
-# Cloud Run expects app to listen on $PORT
-ENV PORT 8080
+# Set backend API URL (you can override this in Cloud Run too)
+ENV REACT_APP_API_URL=https://naya-backend-trgtymzruq-uc.a.run.app
+
 EXPOSE 8080
-
-# Serve static build files
-CMD ["serve", "-s", "build", "-l", "8080"]
+CMD ["npm", "start"]
