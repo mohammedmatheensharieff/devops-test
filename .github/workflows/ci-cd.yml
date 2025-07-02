@@ -53,6 +53,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init and Plan
+        working-directory: terraform
         run: |
           terraform init
           terraform plan -var-file="terraform.tfvars" \
