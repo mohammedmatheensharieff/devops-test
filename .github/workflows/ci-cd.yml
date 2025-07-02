@@ -51,14 +51,15 @@ jobs:
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Plan Only
+      
+      - name: Terraform Init and Plan
         run: |
-          terraform -chdir=terraform init
-          terraform -chdir=terraform plan \
+          terraform init
+          terraform plan \
             -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
             -var="region=${{ secrets.GCP_REGION }}" \
             -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}"
+
 
       # Optional steps if you want to preview Docker image builds
       # - name: Configure Docker to use gcloud
