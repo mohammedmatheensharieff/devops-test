@@ -1,3 +1,3 @@
 
 project_id = "zoeencloudweb"
-region     = "ap-south1"
+region     = "us-central1"
