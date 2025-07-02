@@ -53,6 +53,12 @@ jobs:
         run: |
           gcloud auth configure-docker us-central1-docker.pkg.dev
 
+      # Inject backend URL for frontend build
+      - name: Inject backend URL for frontend
+        run: |
+          echo "REACT_APP_API_URL=https://naya-backend-443764466521.us-central1.run.app" > ./naya-web/.env
+
+
       - name: Build & Push Frontend Docker image
         run: |
           docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest ./naya-web
