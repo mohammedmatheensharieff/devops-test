@@ -59,21 +59,21 @@ jobs:
           docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest ./naya-web
           docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest
 
-      # - name: Build & Push Backend Docker image
-      #   run: |
-      #     docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest ./naya-api
-      #     docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest
+      - name: Build & Push Backend Docker image
+        run: |
+          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest ./naya-api
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest
 
       
-      # - name: Deploy Backend to Cloud Run
-      #   uses: google-github-actions/deploy-cloudrun@v2
-      #   with:
-      #     service: naya-backend
-      #     image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest
-      #     region: ${{ secrets.GCP_REGION }}
-      #     flags: --allow-unauthenticated --region=us-central1
-      #     env_vars: |
-      #       MONGO_URI=${{ secrets.MONGO_URI }}
+      - name: Deploy Backend to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: naya-backend
+          image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest
+          region: ${{ secrets.GCP_REGION }}
+          flags: --allow-unauthenticated --region=us-central1
+          env_vars: |
+            MONGO_URI=${{ secrets.MONGO_URI }}
 
 
       - name: Deploy Frontend to Cloud Run
