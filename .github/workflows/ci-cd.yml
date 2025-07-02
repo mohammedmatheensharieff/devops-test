@@ -38,6 +38,7 @@ jobs:
       - test-backend
     if: ${{ success() }}
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -52,13 +53,93 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Run Terraform to create Artifact Registry
+      - name: Terraform Plan Only
         working-directory: terraform
         run: |
           terraform init
-          terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
-                 -var="region=${{ secrets.GCP_REGION }}" \
-                 -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}"
+          terraform plan \
+            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -var="region=${{ secrets.GCP_REGION }}" \
+            -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}"
+
+      # Optional steps if you want to preview Docker image builds
+      # - name: Configure Docker to use gcloud
+      #   run: gcloud auth configure-docker asia-south1-docker.pkg.dev
+
+      # - name: Build Frontend Docker image
+      #   run: docker build -t frontend-preview ./naya-web
+
+      # - name: Build Backend Docker image
+      #   run: docker build -t backend-preview ./naya-api
+
+
+
+
+
+
+
+
+# name: CI/CD Pipeline
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   test-frontend:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: naya-web
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: '16'
+#       - run: npm install
+#       - run: npm test -- --watchAll=false
+
+#   test-backend:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: naya-api
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: '16'
+#       - run: npm install
+#       - run: npx jest
+
+#   deploy:
+#     needs:
+#       - test-frontend
+#       - test-backend
+#     if: ${{ success() }}
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Google Cloud SDK
+#         uses: google-github-actions/setup-gcloud@v1
+#         with:
+#           project_id: ${{ secrets.GCP_PROJECT_ID }}
+#           service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+#           export_default_credentials: true
+
+#       - name: Install Terraform
+#         uses: hashicorp/setup-terraform@v3
+
+#       - name: Run Terraform to create Artifact Registry
+#         working-directory: terraform
+#         run: |
+#           terraform init
+#           terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+#                  -var="region=${{ secrets.GCP_REGION }}" \
+#                  -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}"
       #     terraform apply -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
       #                                      -var="region=${{ secrets.GCP_REGION }}" \
       #                                      -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}"
