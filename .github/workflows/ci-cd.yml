@@ -49,27 +49,27 @@ jobs:
           service_account_key: ${{ secrets.GCP_CREDENTIALS }}
           export_default_credentials: true
 
-      - name: Install Terraform
-        uses: hashicorp/setup-terraform@v3
+      # - name: Install Terraform
+      #   uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform Init and Plan
-        working-directory: terraform
-        run: |
-          terraform init
+      # - name: Terraform Init and Plan
+      #   working-directory: terraform
+      #   run: |
+      #     terraform init
 
 
-      - name: Import existing Artifact Registry (if needed)
-        working-directory: terraform
-        run: |
-          terraform import google_artifact_registry_repository.naya_registry projects/${{ secrets.GCP_PROJECT_ID }}/locations/us-central1/repositories/nayaregistry || true
+      # - name: Import existing Artifact Registry (if needed)
+      #   working-directory: terraform
+      #   run: |
+      #     terraform import google_artifact_registry_repository.naya_registry projects/${{ secrets.GCP_PROJECT_ID }}/locations/us-central1/repositories/nayaregistry || true
      
-      - name: Terraform Plan & Apply
-        working-directory: terraform
-        run: |
-          terraform plan -var-file="terraform.tfvars" \
-                   -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}'
-          terraform apply -auto-approve -var-file="terraform.tfvars" \
-                  -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}'
+      # - name: Terraform Plan & Apply
+      #   working-directory: terraform
+      #   run: |
+      #     terraform plan -var-file="terraform.tfvars" \
+      #              -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}'
+      #     terraform apply -auto-approve -var-file="terraform.tfvars" \
+      #             -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}'
 
       - name: Configure Docker to use Artifact Registry
         run: |
