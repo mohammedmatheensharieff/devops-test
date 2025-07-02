@@ -38,7 +38,6 @@ jobs:
       - test-backend
     if: ${{ success() }}
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -54,10 +53,9 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Plan Only
-        working-directory: terraform
         run: |
-          terraform init
-          terraform plan \
+          terraform -chdir=terraform init
+          terraform -chdir=terraform plan \
             -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
             -var="region=${{ secrets.GCP_REGION }}" \
             -var="credentials_json=${{ secrets.GCP_CREDENTIALS }}"

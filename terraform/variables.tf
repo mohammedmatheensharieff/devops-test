@@ -1,13 +1,15 @@
 variable "project_id" {
-  type = string
+  type        = string
+  description = "GCP project ID"
 }
 
 variable "region" {
-  type    = string
-  default = "ap-south1"
+  type        = string
+  description = "GCP region"
 }
 
 variable "credentials_json" {
-  type      = string
-  sensitive = true
+  type        = string
+  description = "GCP service account credentials in JSON"
+  sensitive   = true
 }
