@@ -59,7 +59,21 @@ jobs:
           terraform plan -var-file="terraform.tfvars" \
                    -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}'
           terraform apply -auto-approve -var-file="terraform.tfvars" \
-                  -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}' 
+                  -var='credentials_json=${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Configure Docker to use Artifact Registry
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Build & Push Frontend Docker image
+        run: |
+          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest ./naya-web
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest
+
+      - name: Build & Push Backend Docker image
+        run: |
+          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest ./naya-api
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest 
 
       
       # - name: Terraform Init and Plan
