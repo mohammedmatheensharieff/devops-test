@@ -32,60 +32,60 @@ jobs:
       - run: npm install
       - run: npx jest
 
-  deploy:
-    needs:
-      - test-frontend
-      - test-backend
-    if: ${{ success() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+  # deploy:
+  #   needs:
+  #     - test-frontend
+  #     - test-backend
+  #   if: ${{ success() }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
 
 
 
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+  #     - name: Authenticate to Google Cloud
+  #       uses: google-github-actions/auth@v2
+  #       with:
+  #        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-      - name: Configure Docker to use Artifact Registry
-        run: |
-          gcloud auth configure-docker us-central1-docker.pkg.dev
+  #     - name: Configure Docker to use Artifact Registry
+  #       run: |
+  #         gcloud auth configure-docker us-central1-docker.pkg.dev
 
 
-      - name: Build & Push Frontend Docker image
-        run: |
-          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest ./naya-web
-          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest
+  #     - name: Build & Push Frontend Docker image
+  #       run: |
+  #         docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest ./naya-web
+  #         docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest
 
-      - name: Build & Push Backend Docker image
-        run: |
-          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest ./naya-api
-          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest
+  #     - name: Build & Push Backend Docker image
+  #       run: |
+  #         docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest ./naya-api
+  #         docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest
 
       
-      - name: Deploy Backend to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: naya-backend
-          image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest
-          region: ${{ secrets.GCP_REGION }}
-          flags: --allow-unauthenticated --region=us-central1
-          env_vars: |
-            MONGO_URI=${{ secrets.MONGO_URI }}
+  #     - name: Deploy Backend to Cloud Run
+  #       uses: google-github-actions/deploy-cloudrun@v2
+  #       with:
+  #         service: naya-backend
+  #         image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-api:latest
+  #         region: ${{ secrets.GCP_REGION }}
+  #         flags: --allow-unauthenticated --region=us-central1
+  #         env_vars: |
+  #           MONGO_URI=${{ secrets.MONGO_URI }}
 
 
-      - name: Deploy Frontend to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: naya-frontend
-          image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest
-          region: us-central1
-          flags: --allow-unauthenticated --region=us-central1
-          env_vars: |
-            REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}
-          memory: 1Gi
+  #     - name: Deploy Frontend to Cloud Run
+  #       uses: google-github-actions/deploy-cloudrun@v2
+  #       with:
+  #         service: naya-frontend
+  #         image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nayaregistry/naya-web:latest
+  #         region: us-central1
+  #         flags: --allow-unauthenticated --region=us-central1
+  #         env_vars: |
+  #           REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}
+  #         memory: 1Gi
 
 
 
